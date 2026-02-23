@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Clock, MapPin, ArrowLeft } from "lucide-react";
+import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 
 import tourSigiriya from "@/assets/tour-sigiriya.jpg";
@@ -274,6 +275,7 @@ const Tours = () => {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 };
