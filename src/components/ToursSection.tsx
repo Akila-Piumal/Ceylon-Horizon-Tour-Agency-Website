@@ -1,7 +1,14 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { Clock, MapPin } from "lucide-react";
+import { Clock, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/components/ui/carousel";
 
 import tourSigiriya from "@/assets/tour-sigiriya.jpg";
 import tourElla from "@/assets/tour-ella.jpg";
@@ -74,41 +81,62 @@ const ToursSection = () => {
           </p>
         </motion.div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {tours.map((tour, i) => (
-            <motion.div
-              key={tour.name}
-              initial={{ opacity: 0, y: 40 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
-              className="group bg-card rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 border border-border/50"
-            >
-              <div className="relative overflow-hidden h-56">
-                <img
-                  src={tour.image}
-                  alt={tour.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  loading="lazy"
-                />
-                <div className="absolute top-4 right-4 bg-sunset text-accent-foreground font-bold px-4 py-1.5 rounded-full text-sm shadow-lg">
-                  {tour.price}
-                </div>
-              </div>
-              <div className="p-6">
-                <h3 className="font-display text-xl font-bold text-card-foreground mb-2">{tour.name}</h3>
-                <div className="flex items-center gap-4 text-muted-foreground text-sm mb-3">
-                  <span className="flex items-center gap-1"><Clock size={14} /> {tour.duration}</span>
-                  <span className="flex items-center gap-1"><MapPin size={14} /> {tour.location}</span>
-                </div>
-                <p className="text-muted-foreground text-sm leading-relaxed mb-5">{tour.description}</p>
-                <a href="#booking">
-                  <Button className="w-full bg-primary hover:bg-ocean-light text-primary-foreground rounded-full font-semibold">
-                    View Details
-                  </Button>
-                </a>
-              </div>
-            </motion.div>
-          ))}
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          className="w-full"
+        >
+          <CarouselContent className="-ml-6">
+            {tours.map((tour, i) => (
+              <CarouselItem key={tour.name} className="pl-6 sm:basis-1/2 lg:basis-1/3">
+                <motion.div
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.6, delay: i * 0.1 }}
+                  className="group bg-card rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 border border-border/50 h-full flex flex-col"
+                >
+                  <div className="relative overflow-hidden h-56">
+                    <img
+                      src={tour.image}
+                      alt={tour.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      loading="lazy"
+                    />
+                    <div className="absolute top-4 right-4 bg-sunset text-accent-foreground font-bold px-4 py-1.5 rounded-full text-sm shadow-lg">
+                      {tour.price}
+                    </div>
+                  </div>
+                  <div className="p-6 flex flex-col flex-1">
+                    <h3 className="font-display text-xl font-bold text-card-foreground mb-2">{tour.name}</h3>
+                    <div className="flex items-center gap-4 text-muted-foreground text-sm mb-3">
+                      <span className="flex items-center gap-1"><Clock size={14} /> {tour.duration}</span>
+                      <span className="flex items-center gap-1"><MapPin size={14} /> {tour.location}</span>
+                    </div>
+                    <p className="text-muted-foreground text-sm leading-relaxed mb-5">{tour.description}</p>
+                    <a href="#booking" className="mt-auto">
+                      <Button className="w-full bg-primary hover:bg-ocean-light text-primary-foreground rounded-full font-semibold">
+                        View Details
+                      </Button>
+                    </a>
+                  </div>
+                </motion.div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <div className="flex justify-center gap-4 mt-8">
+            <CarouselPrevious className="static translate-y-0 h-11 w-11 rounded-full border-border hover:bg-sunset hover:text-accent-foreground hover:border-sunset" />
+            <CarouselNext className="static translate-y-0 h-11 w-11 rounded-full border-border hover:bg-sunset hover:text-accent-foreground hover:border-sunset" />
+          </div>
+        </Carousel>
+
+        <div className="text-center mt-12">
+          <a href="/tours">
+            <Button className="bg-sunset hover:bg-sunset-light text-accent-foreground font-semibold px-10 py-3 rounded-full text-base">
+              View All Packages
+            </Button>
+          </a>
         </div>
       </div>
     </section>
