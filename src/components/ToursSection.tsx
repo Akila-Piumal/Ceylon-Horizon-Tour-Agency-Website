@@ -1,6 +1,6 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
-import { Clock, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
+import { Clock, MapPin, ChevronLeft, ChevronRight, Star, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -9,6 +9,13 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from "@/components/ui/carousel";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 import tourSigiriya from "@/assets/tour-sigiriya.jpg";
 import tourElla from "@/assets/tour-ella.jpg";
@@ -24,6 +31,7 @@ const tours = [
     description: "Climb the iconic Lion Rock and explore ancient cave temples with breathtaking views.",
     price: "$299",
     location: "Central Province",
+    highlights: ["Climb the legendary Sigiriya Lion Rock fortress", "Explore Dambulla Cave Temple's ancient murals", "Village safari with traditional ox-cart ride", "Scenic views of the Cultural Triangle"],
   },
   {
     image: tourElla,
@@ -32,6 +40,7 @@ const tours = [
     description: "Ride the famous blue train through misty hills, tea plantations, and Nine Arches Bridge.",
     price: "$399",
     location: "Hill Country",
+    highlights: ["Scenic blue train ride through tea country", "Visit the iconic Nine Arches Bridge", "Tea factory tour and tasting experience", "Hike to Little Adam's Peak at sunrise"],
   },
   {
     image: tourBeach,
@@ -40,6 +49,7 @@ const tours = [
     description: "Relax on pristine beaches, watch stilt fishermen, and explore coastal towns.",
     price: "$449",
     location: "Southern Coast",
+    highlights: ["Relax on Unawatuna & Mirissa golden beaches", "Whale watching boat excursion", "Visit Galle Fort UNESCO World Heritage Site", "Watch traditional stilt fishermen at sunset"],
   },
   {
     image: tourCultural,
@@ -48,6 +58,7 @@ const tours = [
     description: "Discover ancient kingdoms, sacred temples, and UNESCO World Heritage Sites.",
     price: "$379",
     location: "North Central",
+    highlights: ["Explore Polonnaruwa ancient ruins by bicycle", "Visit the sacred Temple of the Tooth in Kandy", "Witness traditional Kandyan dance performance", "Tour a spice garden in Matale"],
   },
   {
     image: tourSafari,
@@ -56,12 +67,14 @@ const tours = [
     description: "Spot leopards, elephants, and exotic birds in Sri Lanka's premier national park.",
     price: "$349",
     location: "Yala National Park",
+    highlights: ["Morning & evening jeep safaris in Yala", "Spot leopards, elephants & sloth bears", "Bird watching with expert naturalist guide", "Camping under the stars experience"],
   },
 ];
 
 const ToursSection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const [selectedTour, setSelectedTour] = useState<(typeof tours)[0] | null>(null);
 
   return (
     <section id="tours" className="section-padding">
@@ -115,11 +128,12 @@ const ToursSection = () => {
                       <span className="flex items-center gap-1"><MapPin size={14} /> {tour.location}</span>
                     </div>
                     <p className="text-muted-foreground text-sm leading-relaxed mb-5">{tour.description}</p>
-                    <a href="#booking" className="mt-auto">
-                      <Button className="w-full bg-primary hover:bg-ocean-light text-primary-foreground rounded-full font-semibold">
-                        View Details
-                      </Button>
-                    </a>
+                    <Button
+                      onClick={() => setSelectedTour(tour)}
+                      className="w-full bg-primary hover:bg-ocean-light text-primary-foreground rounded-full font-semibold mt-auto"
+                    >
+                      View Details
+                    </Button>
                   </div>
                 </motion.div>
               </CarouselItem>
@@ -139,6 +153,69 @@ const ToursSection = () => {
           </a>
         </div>
       </div>
+
+      {/* Tour Details Dialog */}
+      <Dialog open={!!selectedTour} onOpenChange={(open) => !open && setSelectedTour(null)}>
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-0">
+          {selectedTour && (
+            <>
+              <div className="relative h-64 overflow-hidden">
+                <img
+                  src={selectedTour.image}
+                  alt={selectedTour.name}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-4 left-6 right-6">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl font-display font-bold text-white text-left">
+                      {selectedTour.name}
+                    </DialogTitle>
+                    <DialogDescription className="text-white/80 text-left">
+                      {selectedTour.location}
+                    </DialogDescription>
+                  </DialogHeader>
+                </div>
+                <div className="absolute top-4 right-12 bg-sunset text-accent-foreground font-bold px-5 py-2 rounded-full text-lg shadow-lg">
+                  {selectedTour.price}
+                </div>
+              </div>
+
+              <div className="p-6 space-y-6">
+                <div className="flex items-center gap-6 text-muted-foreground text-sm">
+                  <span className="flex items-center gap-1.5"><Clock size={16} /> {selectedTour.duration}</span>
+                  <span className="flex items-center gap-1.5"><MapPin size={16} /> {selectedTour.location}</span>
+                </div>
+
+                <div>
+                  <h4 className="font-display font-semibold text-foreground mb-2">About This Tour</h4>
+                  <p className="text-muted-foreground leading-relaxed">{selectedTour.description}</p>
+                </div>
+
+                <div>
+                  <h4 className="font-display font-semibold text-foreground mb-3">Tour Highlights</h4>
+                  <ul className="space-y-2.5">
+                    {selectedTour.highlights.map((highlight, idx) => (
+                      <li key={idx} className="flex items-start gap-2.5 text-muted-foreground">
+                        <CheckCircle size={16} className="text-sunset mt-0.5 shrink-0" />
+                        <span>{highlight}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <a href="#booking" className="flex-1" onClick={() => setSelectedTour(null)}>
+                    <Button className="w-full bg-sunset hover:bg-sunset-light text-accent-foreground font-semibold py-6 rounded-full text-base">
+                      Book Now
+                    </Button>
+                  </a>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };
