@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect  } from "react";
 import { motion, useInView } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,11 +6,36 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+const tourPackages = [
+  "Sigiriya & Dambulla Adventure",
+  "Ella Scenic Escape",
+  "Southern Beach Getaway",
+  "Cultural Triangle Tour",
+  "Yala Safari Experience",
+  "Knuckles Mountain Trek",
+  "Mirissa Whale Watching",
+  "Horton Plains Day Trip",
+  "Kandy Temple & Heritage",
+  "Udawalawe Elephant Safari",
+  "East Coast Adventure",
+  "Adam's Peak Pilgrimage",
+  "Custom Package",
+];
+
 const BookingSection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState("");
+
+  useEffect(() => {
+    const handleSelectTour = (e: CustomEvent<string>) => {
+      setSelectedPackage(e.detail);
+    };
+    window.addEventListener("select-tour-package", handleSelectTour as EventListener);
+    return () => window.removeEventListener("select-tour-package", handleSelectTour as EventListener);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -22,6 +47,7 @@ const BookingSection = () => {
         description: "Our team will confirm your booking within 24 hours.",
       });
       (e.target as HTMLFormElement).reset();
+      setSelectedPackage("");
     }, 1000);
   };
 
@@ -52,16 +78,14 @@ const BookingSection = () => {
         >
           <select
             className="w-full h-12 rounded-xl bg-primary-foreground/10 border border-primary-foreground/20 px-4 text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:ring-2 focus:ring-sunset"
-            defaultValue=""
+            value={selectedPackage}
+            onChange={(e) => setSelectedPackage(e.target.value)}
             required
           >
-            <option value="" disabled>Select Tour Package</option>
-            <option>Sigiriya & Dambulla Adventure</option>
-            <option>Ella Scenic Escape</option>
-            <option>Southern Beach Getaway</option>
-            <option>Cultural Triangle Tour</option>
-            <option>Yala Safari Experience</option>
-            <option>Custom Package</option>
+            <option value="" disabled className="bg-background text-foreground">Select Tour Package</option>
+            {tourPackages.map((pkg) => (
+              <option key={pkg} value={pkg} className="bg-background text-foreground">{pkg}</option>
+            ))}
           </select>
 
           <div className="grid sm:grid-cols-2 gap-4">
@@ -77,12 +101,12 @@ const BookingSection = () => {
               defaultValue=""
               required
             >
-              <option value="" disabled>Number of Guests</option>
-              <option>1 Guest</option>
-              <option>2 Guests</option>
-              <option>3-4 Guests</option>
-              <option>5-8 Guests</option>
-              <option>9+ Guests</option>
+              <option value="" disabled className="bg-background text-foreground">Number of Guests</option>
+              <option className="bg-background text-foreground">1 Guest</option>
+              <option className="bg-background text-foreground">2 Guests</option>
+              <option className="bg-background text-foreground">3-4 Guests</option>
+              <option className="bg-background text-foreground">5-8 Guests</option>
+              <option className="bg-background text-foreground">9+ Guests</option>
             </select>
           </div>
 

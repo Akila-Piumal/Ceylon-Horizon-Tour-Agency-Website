@@ -205,7 +205,18 @@ const ToursSection = () => {
                 </div>
 
                 <div className="flex gap-3 pt-2">
-                  <a href="#booking" className="flex-1" onClick={() => setSelectedTour(null)}>
+                  <a
+                    href="#booking"
+                    className="flex-1"
+                    onClick={() => {
+                      setSelectedTour(null);
+                      setTimeout(() => {
+                        window.dispatchEvent(
+                          new CustomEvent("select-tour-package", { detail: selectedTour!.name })
+                        );
+                      }, 100);
+                    }}
+                  >
                     <Button className="w-full bg-sunset hover:bg-sunset-light text-accent-foreground font-semibold py-6 rounded-full text-base">
                       Book Now
                     </Button>
